@@ -8,6 +8,34 @@ bool weightChanged, timeChanged;
 int16_t previousWeight, currentWeight;
 int16_t previousTime, currentTime;
 
+void setT(bool push)
+{
+  if (push)
+  {
+    pinMode(BUT_T, OUTPUT_S0D1);
+    digitalWrite(BUT_T, LOW);
+  }
+  else
+  {
+    digitalWrite(BUT_T, HIGH);
+    pinMode(BUT_T, INPUT);
+  }
+}
+
+void setP(bool push)
+{
+  if (push)
+  {
+    pinMode(BUT_P, OUTPUT_S0D1);
+    digitalWrite(BUT_P, LOW);
+  }
+  else
+  {
+    digitalWrite(BUT_P, HIGH);
+    pinMode(BUT_P, INPUT);
+  }
+}
+
 void setup(void)
 {
 
@@ -44,8 +72,6 @@ uint32_t lastDataUpdate = 0UL;
 
 void loop()
 {
-  // digitalWrite(LED_L, HIGH);
-
   if (readTM1668())
   {
     lastDataUpdate = millis();
@@ -55,18 +81,18 @@ void loop()
   {
     if (inTareUpdateMillis == 0UL)
     {
-      pinMode(BUT_T, OUTPUT_S0D1);
-      digitalWrite(BUT_T, LOW);
-      inTareUpdateMillis = millis() + 100UL;
+      setP(true);
+      inTareUpdateMillis = millis() + 250UL;
     }
     else if (inTareUpdateMillis < millis())
     {
-      digitalWrite(BUT_T, HIGH);
-      pinMode(BUT_T, INPUT);
+      setP(false);
       notifyTareDone();
+
+      inTareUpdateMillis = millis() + 1000UL;
     }
   }
-  else
+  else if (inTareUpdateMillis < millis())
   {
     inTareUpdateMillis = 0UL;
   }
